@@ -1,4 +1,8 @@
 # Authentication
+
+## Authentication Project Structure
+Let’s look at our project directory tree
+
 ```
 Authentication
 ├─ config
