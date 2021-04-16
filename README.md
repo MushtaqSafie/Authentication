@@ -4,15 +4,15 @@ We will be using a passport to manage user authentication and protect a client's
 
 ## Node.js Frameworks
 Node.js frameworks that are been used in this application are
-* express
+1. express
 > a back end web application framework for Node.js
-* express-session
+2. express-session
 > a back end web application framework for Node.js
-* bcryptjs
-* passport
-* passport-local
-* mysql2
-* sequelize
+3. bcryptjs
+4. passport
+5. passport-local
+6. mysql2
+7. sequelize
 
 
 ## Authentication Project Structure
