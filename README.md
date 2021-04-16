@@ -78,7 +78,7 @@ Node.js frameworks that are been used in this application are
 > Sequelize is a promise-based Node.js ORM tool for Postgres, MySQL, MariaDB, SQLite and Microsoft SQL server. For this application we will be using it with mysql2 to manage MySQL database.
 
 ## Configure MySQL database & Sequelize
-In the **config** folder create a `config.json` file and add the MySQL configuration which is like this:
+In the `config` folder create a `config.json` file and add the MySQL configuration which is like this:
 ```javascript
 {
   "development": {
@@ -167,7 +167,9 @@ This file is provide by Sequelize and for detailed information about Initialize 
 
 
 ## Define the Sequelize Model user.js
+In the `models` folder, we create a new file `user.js` which define the user's Sequelize Model. 
 
+Here we also requrie `bcryptjs` to convert passwords to hash passwords.
 ```javascript
 const bcrypt = require("bcryptjs");
 
@@ -197,7 +199,33 @@ module.exports = (sequelize, DataTypes) => {
   return User;
 };
 ```
+`require("bcryptjs")` First we require the bcrypt for password hashing. 
+**Note:** that using the bcryptjs version as the regular bcrypt module sometimes causes errors on Windows machines
 
+Then we define the table field that includes **email** and **password**
+```javascript
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+    validate: {
+      isEmail: true
+    }
+  }
+```
+The email is a string type and cannot be null, also it must be a proper email before creation since `validate` is `isEmail: true`.
+```javascript
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+```
+The password is also a string type and cannot be null.
+
+`User.prototype.validPassword()` is custom function for our User model. This will check if an unhashed password entered by the user can be compared to the hashed password stored in our database.
+
+`User.addHook()` is another function with two parametter, that is defining automatic methods that run during various phases of the User Model lifecycle
+In this case, before a User is created, we will automatically hash their password
 
 ### Server.js
 ```javascript
