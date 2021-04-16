@@ -14,6 +14,9 @@ Node.js frameworks that are been used in this application are
 
 > Express is a back-end Node.js framework for for web application that manage routing, and HTTP requests, etc & Express-session is require to manage cookie.
 
+> Using passwort and passort-local you will be able to authenticate rquests, and also using bcryptjs library helps you to hash password and then store it in database.
+
+> Sequelize is a promise-based Node.js ORM tool for Postgres, MySQL, MariaDB, SQLite and Microsoft SQL server. For this application we will be using it with mysql2 to manage MySQL database.
 
 
 ## Authentication Project Structure
@@ -45,7 +48,12 @@ Authentication
 ├─ package.json
 └─ server.js
 ```
-
+### Folder Structure
+- `config` store the database configration and passport authentication.
+- `models` define the structure of MySQL database using sequlize.
+- `public` front-end file that display application interface to clients.
+- `routes` define the API and HTML routes of the application.
+<!-- 
 - `config.json` 
 - `isAuthenticated.js` 
 - `passport.js` 
@@ -53,4 +61,4 @@ Authentication
 - `user.js` 
 - `api-routes.js` 
 - `html-routes.js` 
-- `server.js` 
+- `server.js`  -->
