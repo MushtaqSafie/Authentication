@@ -89,3 +89,79 @@ db.sequelize.sync().then(() => {
   });
 });
 ```
+
+
+
+```javascript
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const db = require("../models");
+
+passport.use(new LocalStrategy(
+  {
+    usernameField: "email"
+  },
+  function(email, password, done) {
+    db.User.findOne({
+      where: {
+        email: email
+      }
+    }).then((dbUser) => {
+      if (!dbUser) {
+        return done(null, false, {
+          message: "Incorrect email."
+        });
+      }
+      else if (!dbUser.validPassword(password)) {
+        return done(null, false, {
+          message: "Incorrect password."
+        });
+      }
+      return done(null, dbUser);
+    });
+  }
+));
+
+passport.serializeUser((user, cb) => {
+  cb(null, user);
+});
+
+passport.deserializeUser((obj, cb) => {
+  cb(null, obj);
+});
+
+module.exports = passport;
+```
+
+
+
+```javascript
+// Requiring bcrypt for password hashing. Using the bcryptjs version as the regular bcrypt module sometimes causes errors on Windows machines
+const bcrypt = require("bcryptjs");
+
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define("User", {
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true
+      }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
+  });
+
+  User.prototype.validPassword = (password) => {
+    return bcrypt.compareSync(password, this.password);
+  };
+
+  User.addHook("beforeCreate", (user) => {
+    user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10), null);
+  });
+  return User;
+};
+```
