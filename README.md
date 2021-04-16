@@ -1,27 +1,9 @@
 # Authentication
 This tutorial's core objective is to study how to set up real-world authentication in the Node.js Express app. 
-We will be using a passport to manage user authentication and protect a client's routes that consume an API.
+In this application we will be using a passport to manage user authentication and protect a client's routes that consume an API.
 
-## Node.js Frameworks
-Node.js frameworks that are been used in this application are
-1. Express
-2. Express-session
-3. bcryptjs
-4. passport
-5. passport-local
-6. mysql2
-7. sequelize
-
-> Express is a back-end Node.js framework for for web application that manage routing, and HTTP requests, etc & Express-session is require to manage cookie.
-
-> Using passwort and passort-local you will be able to authenticate rquests, and also using bcryptjs library helps you to hash password and then store it in database.
-
-> Sequelize is a promise-based Node.js ORM tool for Postgres, MySQL, MariaDB, SQLite and Microsoft SQL server. For this application we will be using it with mysql2 to manage MySQL database.
-
-
-## Authentication Project Structure
+## Project files/folders Structure
 Let’s look at the project directory tree
-
 ```bash
 Authentication
 ├─ config
@@ -49,7 +31,7 @@ Authentication
 └─ server.js
 ```
 ### Folder Structure
-- `config` store the database configration and passport authentication.
+- `config` contains the database configration and passport authentication.
 - `models` define the structure of MySQL database using sequlize.
 - `public` front-end file that display application interface to clients.
 - `routes` define the API and HTML routes of the application.
@@ -63,7 +45,98 @@ Authentication
 - `html-routes.js` 
 - `server.js`  -->
 
-## Running the Application
+## Setup Node.js Modules
+After setting the the folders structure, open command prompt and `cd` to current directory of the project. 
+
+Run the following command to initizlize a new npm package:
+```bash
+npm init
+```
+`npm init` is initializer to set up a new npm package.
+
+
+Then install Express, express-session, bcryptjs, passport, passport-local, mysql2, and sequelize using the following command:
+
+```bash
+npm install express express-session bcryptjs passport passport-local mysql2 sequelize
+```
+
+### Node.js Frameworks
+Node.js frameworks that are been used in this application are
+1. Express
+2. Express-session
+3. bcryptjs
+4. passport
+5. passport-local
+6. mysql2
+7. sequelize
+
+> Express is a back-end Node.js framework for for web application that manage routing, and HTTP requests, etc & Express-session is require to manage cookie.
+
+> Using passwort and passort-local you will be able to authenticate rquests, and also using bcryptjs library helps you to hash password and then store it in database.
+
+> Sequelize is a promise-based Node.js ORM tool for Postgres, MySQL, MariaDB, SQLite and Microsoft SQL server. For this application we will be using it with mysql2 to manage MySQL database.
+
+## Configure MySQL database & Sequelize
+In the **config** folder create a `config.json` file and add the MySQL configuration which is like this:
+```javascript
+{
+  "development": {
+    "username": "root",
+    "password": null,
+    "database": "passport_demo",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
+```
+This file include database configuration for **development**, **test**, and **production** mode, that each has object.key for `username`, `password`, `database`, `host`, and `dialect`.
+
+### user.js MySQL
+```javascript
+const bcrypt = require("bcryptjs");
+
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define("User", {
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true
+      }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
+  });
+
+  User.prototype.validPassword = (password) => {
+    return bcrypt.compareSync(password, this.password);
+  };
+
+  User.addHook("beforeCreate", (user) => {
+    user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10), null);
+  });
+  return User;
+};
+```
+
 
 ### Server.js
 ```javascript
@@ -133,35 +206,4 @@ passport.deserializeUser((obj, cb) => {
 });
 
 module.exports = passport;
-```
-
-### user.js MySQL
-```javascript
-const bcrypt = require("bcryptjs");
-
-module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define("User", {
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      validate: {
-        isEmail: true
-      }
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false
-    }
-  });
-
-  User.prototype.validPassword = (password) => {
-    return bcrypt.compareSync(password, this.password);
-  };
-
-  User.addHook("beforeCreate", (user) => {
-    user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10), null);
-  });
-  return User;
-};
 ```
