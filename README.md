@@ -1,9 +1,14 @@
 # Authentication
+This tutorial's core objective is to study how to set up real-world authentication in the Node.js Express app. 
+We will be using a passport to manage user authentication and protect a client's routes that consume an API.
+
+## Node.js Frameworks
+Node.js frameworks that are been used in this application are
 
 ## Authentication Project Structure
-Let’s look at our project directory tree
+Let’s look at the project directory tree
 
-```
+```bash
 Authentication
 ├─ config
 │  ├─ config.json
