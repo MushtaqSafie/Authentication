@@ -63,6 +63,9 @@ Authentication
 - `html-routes.js` 
 - `server.js`  -->
 
+## Running the Application
+
+### Server.js
 ```javascript
 const express = require("express");
 const session = require("express-session");
@@ -90,8 +93,7 @@ db.sequelize.sync().then(() => {
 });
 ```
 
-
-
+### Passport.js
 ```javascript
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
@@ -133,10 +135,8 @@ passport.deserializeUser((obj, cb) => {
 module.exports = passport;
 ```
 
-
-
+### user.js MySQL
 ```javascript
-// Requiring bcrypt for password hashing. Using the bcryptjs version as the regular bcrypt module sometimes causes errors on Windows machines
 const bcrypt = require("bcryptjs");
 
 module.exports = (sequelize, DataTypes) => {
