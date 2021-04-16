@@ -104,9 +104,70 @@ In the **config** folder create a `config.json` file and add the MySQL configura
   }
 }
 ```
-This file include database configuration for **development**, **test**, and **production** mode, that each has object.key for `username`, `password`, `database`, `host`, and `dialect`.
+This file include database configuration for **development**, **test**, and **production** mode, that each has object.key for:
 
-### user.js MySQL
+* `username` the username of database.
+* `password` the password of database user.
+* `database` the name of the database.
+* `host` the port of the database that is being hosted.
+* `dialect` the type of database.
+
+Above values for each object.key might be different, depends on your database configration.
+
+For more information about Sequelize Configuration visit [Sequelize Configuration](https://sequelize.org/master/manual/migrations.html)
+
+## Initialize Sequelize
+Now we initialize Sequelize in `models` folder in `index.js` file.
+```javascript
+const fs = require("fs");
+const path = require("path");
+const Sequelize = require("sequelize");
+const basename = path.basename(__filename);
+const env = process.env.NODE_ENV || "development";
+const config = require(__dirname + "/../config/config.json")[env];
+const db = {};
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config
+  );
+}
+fs.readdirSync(__dirname)
+  .filter(file => {
+    return (
+      file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".js"
+    );
+  })
+  .forEach(file => {
+    const model = require(path.join(__dirname, file))(
+      sequelize,
+      Sequelize.DataTypes
+    );
+    db[model.name] = model;
+  });
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+module.exports = db;
+```
+This file initialize the MySQL database using Sequelize and create all models or table that exict in the `models` folder.
+In our case we have `user.js` model and create a table to store the user's email address and password.
+
+This file is provide by Sequelize and for detailed information about Initialize Sequelize [Getting Started with Sequelize](https://sequelize.org/master/manual/getting-started.html)
+
+
+## Define the Sequelize Model user.js
+
 ```javascript
 const bcrypt = require("bcryptjs");
 
