@@ -224,8 +224,13 @@ The password is also a string type and cannot be null.
 
 `User.prototype.validPassword()` is custom function for our User model. This will check if an unhashed password entered by the user can be compared to the hashed password stored in our database.
 
-`User.addHook()` is another function with two parametter, that is defining automatic methods that run during various phases of the User Model lifecycle
+`User.addHook()` is sequelize function with two parametter, that is defining automatic methods that run during various phases of the User Model lifecycle
 In this case, before a User is created, we will automatically hash their password
+
+For more information about sequelize hooks vist [Sequelize Hooks](https://sequelize.org/master/manual/hooks.html)
+
+Finally at the end we return the User as module.exports.
+
 
 ### Server.js
 ```javascript
